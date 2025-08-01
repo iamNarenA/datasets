@@ -80,6 +80,7 @@
     }
 
     button {
+      position: relative; /* needed for tooltip */
       background: #2563eb;
       border: none;
       border-radius: 6px;
@@ -91,6 +92,49 @@
       transition: background-color 0.2s, box-shadow 0.2s;
       box-shadow: 0 2px 6px rgb(37 99 235 / 0.4);
       user-select: none;
+    }
+
+    /* Tooltip styles */
+    button::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 125%; /* place above the button */
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(37, 99, 235, 0.9); /* semi-transparent blue */
+      color: white;
+      padding: 6px 10px;
+      border-radius: 4px;
+      white-space: nowrap;
+      font-size: 0.85rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 10;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    /* Tooltip arrow */
+    button::before {
+      content: "";
+      position: absolute;
+      bottom: 115%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 6px;
+      border-style: solid;
+      border-color: rgba(37, 99, 235, 0.9) transparent transparent transparent;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 10;
+    }
+
+    /* Show tooltip on hover */
+    button:hover::after,
+    button:hover::before {
+      opacity: 1;
+      pointer-events: auto;
     }
 
     button:hover {
@@ -187,13 +231,12 @@
 
           const btn = document.createElement('button');
           btn.textContent = 'Use ChatGPT';
-          btn.title = ' Bingo.....Prompt copied! Paste it in Prompt window and press enter.'; // Tooltip message
+          btn.setAttribute('data-tooltip', ' Bingo...Prompt copied! Paste it in ChatGPT and press enter.');
           btn.onclick = () => {
             navigator.clipboard.writeText(promptText).then(() => {
               window.open('https://chat.openai.com/chat', '_blank');
-              alert('Prompt copied to clipboard! You can now paste it into ChatGPT.');
             }).catch(err => {
-              alert('Failed to copy prompt to clipboard: ' + err);
+              console.error('Failed to copy prompt:', err);
             });
           };
 
