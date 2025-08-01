@@ -11,8 +11,5 @@ size_categories:
 
 This is a Dataset Repository of **Awesome Jingo Prompts**
 
-**[View All Prompts on GitHub](https://github.com/f/awesome-chatgpt-prompts)**
 
-# License
 
-CC-0
