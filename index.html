@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Jingo Prompts :) ...... Mr.UKNIT</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+</head>
+<body>
+  <h1>ChatGPT Prompts</h1>
+  <table border="1" id="promptsTable">
+    <thead>
+      <tr><th>Prompt</th><th>Action</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    fetch('data/prompts.csv')
+      .then(response => response.text())
+      .then(csvText => {
+        const data = Papa.parse(csvText, { header: true });
+        const tbody = document.querySelector('#promptsTable tbody');
+        data.data.forEach(row => {
+          const tr = document.createElement('tr');
+          const promptText = row.prompt || row.Prompt || row.PROMPT || '';  // adjust key to your CSV header
+
+          const tdPrompt = document.createElement('td');
+          tdPrompt.textContent = promptText;
+
+          const tdAction = document.createElement('td');
+          const btn = document.createElement('button');
+          btn.textContent = 'Copy';
+          btn.onclick = () => navigator.clipboard.writeText(promptText);
+          tdAction.appendChild(btn);
+
+          tr.appendChild(tdPrompt);
+          tr.appendChild(tdAction);
+          tbody.appendChild(tr);
+        });
+      });
+  </script>
+</body>
+</html>
