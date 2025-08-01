@@ -1,16 +1,159 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>My Jingo Prompts :) ...... Mr.UKNIT </title>
+  <meta charset="UTF-8" />
+  <title>My Jingo Prompts :) ...... Mr.UKNIT</title>
+  
+  <!-- Google Fonts: Montserrat -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet" />
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  
+  <style>
+    /* Reset some default styling */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: #f9fafb;
+      color: #333;
+      margin: 0;
+      padding: 2rem;
+      min-height: 100vh;
+    }
+
+    h2 {
+      font-weight: 600;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      color: #111827;
+      letter-spacing: 0.03em;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 12px;
+      box-shadow: 0 2px 4px rgb(0 0 0 / 0.1);
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    thead tr {
+      background: #2563eb; /* Tailwind Blue 600 */
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
+      text-align: left;
+    }
+
+    thead th {
+      padding: 14px 20px;
+    }
+
+    tbody tr {
+      background: white;
+      transition: background-color 0.2s;
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgb(0 0 0 / 0.06);
+    }
+
+    tbody tr:hover {
+      background-color: #f3f4f6; /* Tailwind Gray 100 */
+    }
+
+    tbody td {
+      padding: 14px 20px;
+      vertical-align: middle;
+      font-size: 1rem;
+      color: #374151;
+      user-select: text;
+    }
+
+    tbody td:nth-child(1) {
+      max-width: 600px;
+      word-wrap: break-word;
+    }
+
+    button {
+      background: #2563eb;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background-color 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 6px rgb(37 99 235 / 0.4);
+      user-select: none;
+    }
+
+    button:hover {
+      background: #1e40af; /* Tailwind Blue 800 */
+      box-shadow: 0 4px 10px rgb(30 64 175 / 0.6);
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    /* Responsive for small screens */
+    @media (max-width: 640px) {
+      body {
+        padding: 1rem;
+      }
+      table, thead tr, tbody tr, th, td {
+        display: block;
+        width: 100%;
+      }
+      thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+      }
+      tbody tr {
+        margin-bottom: 1.5rem;
+        box-shadow: none;
+        border-radius: 8px;
+        background: #fafafa;
+      }
+      tbody td {
+        padding-left: 50%;
+        position: relative;
+        font-size: 0.95rem;
+      }
+      tbody td::before {
+        position: absolute;
+        left: 20px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        font-weight: 600;
+        content: attr(data-label);
+        color: #6b7280;
+      }
+      td:nth-child(1)::before { content: "Prompt"; }
+      td:nth-child(2)::before { content: "Action"; }
+      button {
+        width: 100%;
+        padding: 12px 0;
+        font-size: 1.1rem;
+      }
+    }
+  </style>
 </head>
 <body>
   <h2>My Jingo Prompts :) ...... Mr.UKNIT</h2>
-  <table border="1" id="promptsTable" style="width: 100%; border-collapse: collapse;">
+  <table id="promptsTable" aria-label="ChatGPT prompts table">
     <thead>
       <tr>
-        <th style="padding: 8px; text-align: left;">Prompt</th>
-        <th style="padding: 8px; text-align: center;">Action</th>
+        <th scope="col">Prompt</th>
+        <th scope="col" style="text-align:center;">Action</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -27,28 +170,23 @@
       .then(csvText => {
         const data = Papa.parse(csvText, { header: true });
         const tbody = document.querySelector('#promptsTable tbody');
-        
+
         data.data.forEach(row => {
           const promptText = row.prompt || row.Prompt || row.PROMPT || '';
-          if (promptText.trim() === '') return; // skip empty prompts
-          
+          if (promptText.trim() === '') return; // Skip empty prompts
+
           const tr = document.createElement('tr');
 
           const tdPrompt = document.createElement('td');
           tdPrompt.textContent = promptText;
-          tdPrompt.style.padding = '8px';
-          tdPrompt.style.userSelect = 'text';
+          tdPrompt.setAttribute('data-label', 'Prompt');
 
           const tdAction = document.createElement('td');
-          tdAction.style.padding = '8px';
           tdAction.style.textAlign = 'center';
+          tdAction.setAttribute('data-label', 'Action');
 
           const btn = document.createElement('button');
           btn.textContent = 'Use ChatGPT';
-          btn.style.cursor = 'pointer';
-          btn.style.padding = '6px 12px';
-          btn.style.fontSize = '1em';
-
           btn.onclick = () => {
             navigator.clipboard.writeText(promptText).then(() => {
               window.open('https://chat.openai.com/chat', '_blank');
@@ -59,7 +197,6 @@
           };
 
           tdAction.appendChild(btn);
-
           tr.appendChild(tdPrompt);
           tr.appendChild(tdAction);
           tbody.appendChild(tr);
