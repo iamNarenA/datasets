@@ -6,36 +6,68 @@
 </head>
 <body>
   <h2>My Jingo Prompts :) ...... Mr.UKNIT</h2>
-  <table border="1" id="promptsTable">
+  <table border="1" id="promptsTable" style="width: 100%; border-collapse: collapse;">
     <thead>
-      <tr><th>Prompt</th><th>Action</th></tr>
+      <tr>
+        <th style="padding: 8px; text-align: left;">Prompt</th>
+        <th style="padding: 8px; text-align: center;">Action</th>
+      </tr>
     </thead>
     <tbody></tbody>
   </table>
 
   <script>
     fetch('data/prompts.csv')
-      .then(response => response.text())
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to load prompts CSV');
+        }
+        return response.text();
+      })
       .then(csvText => {
         const data = Papa.parse(csvText, { header: true });
         const tbody = document.querySelector('#promptsTable tbody');
+        
         data.data.forEach(row => {
+          const promptText = row.prompt || row.Prompt || row.PROMPT || '';
+          if (promptText.trim() === '') return; // skip empty prompts
+          
           const tr = document.createElement('tr');
-          const promptText = row.prompt || row.Prompt || row.PROMPT || '';  // adjust key to your CSV header
 
           const tdPrompt = document.createElement('td');
           tdPrompt.textContent = promptText;
+          tdPrompt.style.padding = '8px';
+          tdPrompt.style.userSelect = 'text';
 
           const tdAction = document.createElement('td');
+          tdAction.style.padding = '8px';
+          tdAction.style.textAlign = 'center';
+
           const btn = document.createElement('button');
-          btn.textContent = 'Copy';
-          btn.onclick = () => navigator.clipboard.writeText(promptText);
+          btn.textContent = 'Use ChatGPT';
+          btn.style.cursor = 'pointer';
+          btn.style.padding = '6px 12px';
+          btn.style.fontSize = '1em';
+
+          btn.onclick = () => {
+            navigator.clipboard.writeText(promptText).then(() => {
+              window.open('https://chat.openai.com/chat', '_blank');
+              alert('Prompt copied to clipboard! You can now paste it into ChatGPT.');
+            }).catch(err => {
+              alert('Failed to copy prompt to clipboard: ' + err);
+            });
+          };
+
           tdAction.appendChild(btn);
 
           tr.appendChild(tdPrompt);
           tr.appendChild(tdAction);
           tbody.appendChild(tr);
         });
+      })
+      .catch(error => {
+        console.error(error);
+        document.body.insertAdjacentHTML('beforeend', '<p style="color:red;">Error loading prompts CSV file.</p>');
       });
   </script>
 </body>
